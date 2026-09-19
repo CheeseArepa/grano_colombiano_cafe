@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-color: #F1E6D3;
+  --surface-color: #FFFBF2;
+  --card-bg: #FFFBF2;
+  --text-main: #2E1D12;
+  --text-muted: #8A7156;
+  --border-color: #DCC9A8;
+  --primary-blue: #A9552E;
+  --primary-hover: #8B431F;
+  --gold: #B98A2E;
+  --font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --shadow-sm: 0 1px 3px 0 rgb(46 29 18 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(46 29 18 / 0.10), 0 2px 6px -2px rgb(46 29 18 / 0.06);
+  --shadow-lg: 0 16px 28px -6px rgb(46 29 18 / 0.16), 0 4px 10px -2px rgb(46 29 18 / 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
