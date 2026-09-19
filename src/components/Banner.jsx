@@ -2,10 +2,11 @@ export function Banner() {
     return (
         <>
             <section className="hero-banner">
-                <div className="banner-badge">☕ Tueste artesanal en lotes pequeños</div>
-                <h1 className="banner-title">Café en grano, recién tostado desde el origen</h1>
+                <div className="banner-badge">☕ Café de alta calidad </div>
+                <h1 className="banner-title">Café molido de tus marcas favoritas, en un solo lugar</h1>
                 <p className="banner-subtitle">
-                    Seleccionamos granos de distintas fincas y los tostamos en pequeños lotes para que cada bolsa llegue a tu mesa con su carácter intacto.
+                    Reunimos café molido de diferentes marcas para que compares, elijas y disfrutes
+                    el sabor que más te guste, listo para preparar en casa.
                 </p>
             </section>
         </>
