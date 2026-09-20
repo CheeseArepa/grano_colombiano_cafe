@@ -1,4 +1,4 @@
-import { solicitarApi } from './api';
+import { solicitarApi } from './api.js';
 
 const API_URL = 'https://6aa6bb8dd7765db985078fad.mockapi.io/information';
 
