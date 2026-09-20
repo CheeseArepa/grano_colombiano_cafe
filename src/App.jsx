@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router';
 import './App.css';
 import { AuthModal } from './components/AuthModal';
-import { AccesoAdmin, AccesoMiPedido } from './components/auth/RouteGuards';
+import { AccesoAdmin } from './components/auth/RouteGuards';
 import { AppLayout } from './components/layout/AppLayout';
 import { CatalogPage } from './pages/CatalogPage';
 import { PedidoPage } from './pages/PedidoPage';
@@ -67,7 +67,7 @@ function App() {
     localStorage.setItem(CLAVE_SESION, JSON.stringify(sesionNueva));
     setSesion(sesionNueva);
     setModalAuth(null);
-    navigate(location.state?.from || '/catalogo', { replace: true });
+    navigate(location.state?.from || location.pathname || '/catalogo', { replace: true });
   };
 
   const iniciarSesion = async ({ correo, clave }) => {
@@ -100,7 +100,7 @@ function App() {
       <Route element={<AppLayout contexto={contexto} />}>
         <Route index element={<Navigate replace to="catalogo" />} />
         <Route path="catalogo" element={<CatalogPage />} />
-        <Route element={<AccesoMiPedido />}><Route path="mi-pedido" element={<PedidoPage />} /></Route>
+        <Route path="mi-pedido" element={<PedidoPage />} />
         <Route path="admin" element={<AccesoAdmin />}>
           <Route index element={<Navigate replace to="productos" />} />
           <Route path="productos" element={<ProductosAdminPage />} />
