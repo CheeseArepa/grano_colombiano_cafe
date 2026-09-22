@@ -654,8 +654,8 @@
   font-size: 1rem;
 }
 
-/* Gestion Productos Container */
-.gestion-productos-section {
+/* Contenedor de las secciones del panel de administración */
+.admin-section {
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -1032,3 +1032,316 @@
 }
 
 
+
+/* ===================== Carrito / Mi Pedido ===================== */
+
+.carrito-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.carrito-linea {
+  display: grid;
+  grid-template-columns: 72px 1fr auto auto auto;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.carrito-linea-imagen img,
+.carrito-linea-sin-imagen {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+}
+
+.carrito-linea-sin-imagen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EDE0C7;
+}
+
+.carrito-linea-nombre {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.carrito-linea-precio {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.carrito-cantidad {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #FAF3E6;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.carrito-cantidad-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--surface-color);
+  color: var(--primary-blue);
+  font-family: var(--font-family);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carrito-cantidad-btn:hover:not(:disabled) {
+  background-color: var(--primary-blue);
+  color: #ffffff;
+}
+
+.carrito-cantidad-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.carrito-cantidad-valor {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.carrito-linea-subtotal {
+  min-width: 100px;
+  text-align: right;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+/* Resumen */
+.carrito-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.carrito-resumen-filas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+}
+
+.carrito-resumen-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.carrito-resumen-total {
+  border-top: 1px solid #EDE0C7;
+  padding-top: 8px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.carrito-resumen-total span:last-child {
+  color: var(--primary-blue);
+}
+
+/* Estado vacío */
+.carrito-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 32px;
+  text-align: center;
+  background-color: #FAF3E6;
+  border: 1px dashed #C9AE83;
+  border-radius: 12px;
+}
+
+.carrito-vacio-icono {
+  font-size: 2.5rem;
+}
+
+.carrito-vacio h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text-main);
+}
+
+.carrito-vacio p {
+  color: var(--text-muted);
+  max-width: 420px;
+}
+
+.carrito-vacio .btn-save {
+  margin-top: 8px;
+  display: inline-block;
+}
+
+/* Formulario de datos de entrega */
+.carrito-formulario .form-error {
+  margin-top: 6px;
+  color: #991b1b;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.form-group-con-error .form-input {
+  border-color: #f87171;
+  background-color: #fef2f2;
+}
+
+/* Confirmación */
+.pedido-confirmado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 32px;
+  text-align: center;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pedido-confirmado-icono {
+  font-size: 2.5rem;
+}
+
+.pedido-confirmado h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-main);
+}
+
+.pedido-confirmado-numero {
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.pedido-confirmado-numero strong {
+  color: var(--primary-blue);
+  font-family: var(--font-display);
+}
+
+.pedido-confirmado-fecha {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.pedido-confirmado-bloque {
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+  background-color: #FAF3E6;
+  border: 1px solid #EDE0C7;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 8px;
+}
+
+.pedido-confirmado-bloque h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.pedido-confirmado-bloque p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.pedido-confirmado-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pedido-confirmado-lista li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.pedido-confirmado-total {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  margin-top: 10px;
+  padding-top: 10px;
+  font-weight: 700;
+  color: var(--text-main) !important;
+}
+
+.pedido-confirmado-notas {
+  font-style: italic;
+  margin-top: 6px;
+}
+
+.pedido-confirmado-estado {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.pedido-confirmado .btn-save {
+  margin-top: 8px;
+  display: inline-block;
+}
+
+@media (max-width: 720px) {
+  .carrito-linea {
+    grid-template-columns: 56px 1fr auto;
+    row-gap: 12px;
+  }
+
+  .carrito-linea-imagen img,
+  .carrito-linea-sin-imagen {
+    width: 56px;
+    height: 56px;
+  }
+
+  .carrito-linea-datos {
+    grid-column: 2 / -1;
+  }
+
+  .carrito-cantidad {
+    grid-column: 1 / 3;
+  }
+
+  .carrito-linea-subtotal {
+    text-align: left;
+    min-width: 0;
+  }
+}

@@ -1,11 +1,14 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 
 # Build output and tool caches
 dist/
 dist-ssr/
 .vite/
 .cache/
+.eslintcache
+*.tsbuildinfo
 coverage/
 
 # Runtime logs
@@ -22,10 +25,13 @@ lerna-debug.log*
 .env.*
 !.env.example
 *.local
+*.pem
+*.key
 
 # Local deployment and test artifacts
 .vercel/
 .netlify/
+.turbo/
 playwright-report/
 test-results/
 
@@ -34,9 +40,16 @@ test-results/
 !.vscode/extensions.json
 .idea/
 .DS_Store
+.AppleDouble
+.LSOverride
 Thumbs.db
+Desktop.ini
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*~
+*.bak
+*.tmp
+.history/
