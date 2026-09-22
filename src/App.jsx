@@ -1,122 +1,108 @@
-import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router';
+import { useMemo, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router';
+import { CATEGORIA_INICIO } from './constantes/dominio';
+import { RUTAS, SECCION_ADMIN } from './constantes/rutas';
+import { useCarrito } from './hooks/useCarrito';
+import { useRecursoApi } from './hooks/useRecursoApi';
+import { useSesion } from './hooks/useSesion';
+import { obtenerCategorias } from './servicios/categoriaServicio';
+import { obtenerInformacion } from './servicios/informacionServicio';
+import { obtenerProductos } from './servicios/productoServicio';
+import { ModalAutenticacion } from './componentes/autenticacion/ModalAutenticacion';
+import { RutaAdmin } from './componentes/autenticacion/RutaAdmin';
+import { LayoutPrincipal } from './componentes/layout/LayoutPrincipal';
 import './App.css';
-import { AuthModal } from './components/AuthModal';
-import { AccesoAdmin } from './components/auth/RouteGuards';
-import { AppLayout } from './components/layout/AppLayout';
-import { CatalogPage } from './pages/CatalogPage';
-import { PedidoPage } from './pages/PedidoPage';
-import { UnauthorizedPage } from './pages/UnauthorizedPage';
-import { CategoriasAdminPage, ClientesAdminPage, EstadosAdminPage, InformacionAdminPage, OrdenesAdminPage, ProductosAdminPage, UsuariosAdminPage } from './pages/AdminPages';
-import { obtenerProductos } from './services/productService';
-import { obtenerCategorias } from './services/categoryService';
-import { crearUsuario, normalizarCorreo, obtenerUsuarios, ROL_BASICO, usuarioEstaActivo } from './services/userService';
-import { obtenerClientes } from './services/clientService';
-import { obtenerOrdenes } from './services/orderService';
-import { obtenerEstados } from './services/orderStatusService';
-import { obtenerInformacion } from './services/informationService';
+import { PaginaCategorias } from './paginas/admin/PaginaCategorias';
+import { PaginaClientes } from './paginas/admin/PaginaClientes';
+import { PaginaEstadosOrden } from './paginas/admin/PaginaEstadosOrden';
+import { PaginaInformacion } from './paginas/admin/PaginaInformacion';
+import { PaginaOrdenes } from './paginas/admin/PaginaOrdenes';
+import { PaginaProductos } from './paginas/admin/PaginaProductos';
+import { PaginaUsuarios } from './paginas/admin/PaginaUsuarios';
+import { PaginaCatalogo } from './paginas/PaginaCatalogo';
+import { PaginaMiPedido } from './paginas/PaginaMiPedido';
+import { PaginaNoAutorizado } from './paginas/PaginaNoAutorizado';
 
-const CLAVE_SESION = 'grano-colombiano-sesion';
-
-const obtenerSesionGuardada = () => {
-  try { return JSON.parse(localStorage.getItem(CLAVE_SESION)) || null; } catch { return null; }
-};
-
-const cargarRecurso = (obtener, asignar, cargar) => {
-  cargar(true);
-  return obtener()
-    .then((data) => asignar(Array.isArray(data) ? data : []))
-    .catch((error) => console.error('Error al cargar datos:', error))
-    .finally(() => cargar(false));
-};
-
+// `productos`, `categorias` e `informacion` alimentan vistas públicas
+// (catálogo, encabezado, pie de página) y por eso se cargan aquí, al montar
+// la aplicación.
+//
+// `usuarios`, `clientes`, `ordenes` y `estadosOrden` NO se cargan aquí a
+// propósito: son datos de administración (el de usuarios incluye la clave en
+// texto plano de cada cuenta) y no deben pedirse a la API hasta que una
+// sesión de administrador entra a la sección correspondiente. Cada una de
+// esas páginas pide su propio recurso; `RutaAdmin` garantiza que solo se
+// monten con una sesión de administrador activa.
 function App() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [categoriaActiva, setCategoriaActiva] = useState('Inicio');
-  const [cartCount, setCartCount] = useState(0);
-  const [sesion, setSesion] = useState(obtenerSesionGuardada);
-  const [modalAuth, setModalAuth] = useState(null);
-  const [procesandoAuth, setProcesandoAuth] = useState(false);
-  const [productos, setProductos] = useState([]); const [cargando, setCargando] = useState(true);
-  const [categorias, setCategorias] = useState([]); const [cargandoCategorias, setCargandoCategorias] = useState(true);
-  const [usuarios, setUsuarios] = useState([]); const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
-  const [clientes, setClientes] = useState([]); const [cargandoClientes, setCargandoClientes] = useState(true);
-  const [ordenes, setOrdenes] = useState([]); const [cargandoOrdenes, setCargandoOrdenes] = useState(true);
-  const [estados, setEstados] = useState([]); const [cargandoEstados, setCargandoEstados] = useState(true);
-  const [informacion, setInformacion] = useState([]); const [cargandoInformacion, setCargandoInformacion] = useState(true);
+  const productos = useRecursoApi(obtenerProductos);
+  const categorias = useRecursoApi(obtenerCategorias);
+  const informacion = useRecursoApi(obtenerInformacion);
 
-  const cargarProductos = () => cargarRecurso(obtenerProductos, setProductos, setCargando);
-  const cargarCategorias = () => cargarRecurso(obtenerCategorias, setCategorias, setCargandoCategorias);
-  const cargarUsuarios = () => cargarRecurso(obtenerUsuarios, setUsuarios, setCargandoUsuarios);
-  const cargarClientes = () => cargarRecurso(obtenerClientes, setClientes, setCargandoClientes);
-  const cargarOrdenes = () => cargarRecurso(obtenerOrdenes, setOrdenes, setCargandoOrdenes);
-  const cargarEstados = () => cargarRecurso(obtenerEstados, setEstados, setCargandoEstados);
-  const cargarInformacion = () => cargarRecurso(obtenerInformacion, setInformacion, setCargandoInformacion);
+  const autenticacion = useSesion();
 
-  useEffect(() => {
-    cargarProductos(); cargarCategorias(); cargarUsuarios(); cargarClientes(); cargarOrdenes(); cargarEstados(); cargarInformacion();
-  }, []);
+  const carrito = useCarrito();
 
-  useEffect(() => {
-    if (location.state?.authMode) setModalAuth(location.state.authMode);
-  }, [location.state]);
+  const [categoriaActiva, setCategoriaActiva] = useState(CATEGORIA_INICIO);
 
-  const guardarSesion = (usuario) => {
-    const sesionNueva = { id: usuario.id, nombre: usuario.nombre, correo: usuario.correo, rol: usuario.rol };
-    localStorage.setItem(CLAVE_SESION, JSON.stringify(sesionNueva));
-    setSesion(sesionNueva);
-    setModalAuth(null);
-    navigate(location.state?.from || location.pathname || '/catalogo', { replace: true });
-  };
+  // Memorizado para no invalidar el contexto (y volver a renderizar todas las
+  // páginas) en cada render de `App`.
+  const contexto = useMemo(() => ({
+    categoriaActiva,
+    setCategoriaActiva,
+    carrito,
+    sesion: autenticacion.sesion,
+    abrirAutenticacion: autenticacion.abrirModal,
+    cerrarSesion: autenticacion.cerrarSesion,
+    productos,
+    categorias,
+    informacion
+  }), [
+    categoriaActiva,
+    carrito,
+    autenticacion.sesion,
+    autenticacion.abrirModal,
+    autenticacion.cerrarSesion,
+    productos,
+    categorias,
+    informacion
+  ]);
 
-  const iniciarSesion = async ({ correo, clave }) => {
-    setProcesandoAuth(true);
-    try {
-      const usuario = (await obtenerUsuarios()).find((item) => normalizarCorreo(item.correo) === normalizarCorreo(correo) && item.clave === clave && usuarioEstaActivo(item));
-      if (!usuario) { alert('Correo o contraseña incorrectos.'); return; }
-      guardarSesion(usuario);
-    } catch (error) { console.error('Error al iniciar sesión:', error); alert('No fue posible iniciar sesión. Intenta nuevamente.'); } finally { setProcesandoAuth(false); }
-  };
+  return (
+    <>
+      <Routes>
+        <Route element={<LayoutPrincipal contexto={contexto} />}>
+          <Route index element={<Navigate replace to="catalogo" />} />
+          <Route path="catalogo" element={<PaginaCatalogo />} />
+          <Route path="mi-pedido" element={<PaginaMiPedido />} />
 
-  const registrarUsuario = async ({ nombre, correo, clave }) => {
-    setProcesandoAuth(true);
-    try {
-      const correoNormalizado = normalizarCorreo(correo);
-      const usuariosActuales = await obtenerUsuarios();
-      if (usuariosActuales.some((usuario) => normalizarCorreo(usuario.correo) === correoNormalizado)) { alert('Ya existe una cuenta registrada con este correo.'); return; }
-      const usuario = await crearUsuario({ nombre: nombre.trim(), correo: correoNormalizado, clave, estado: true, rol: ROL_BASICO });
-      cargarUsuarios();
-      guardarSesion(usuario);
-    } catch (error) { console.error('Error al registrar usuario:', error); alert('No fue posible crear la cuenta. Intenta nuevamente.'); } finally { setProcesandoAuth(false); }
-  };
+          <Route path="admin" element={<RutaAdmin />}>
+            <Route index element={<Navigate replace to={SECCION_ADMIN.PRODUCTOS} />} />
+            <Route path={SECCION_ADMIN.PRODUCTOS} element={<PaginaProductos />} />
+            <Route path={SECCION_ADMIN.CATEGORIAS} element={<PaginaCategorias />} />
+            <Route path={SECCION_ADMIN.USUARIOS} element={<PaginaUsuarios />} />
+            <Route path={SECCION_ADMIN.CLIENTES} element={<PaginaClientes />} />
+            <Route path={SECCION_ADMIN.ORDENES} element={<PaginaOrdenes />} />
+            <Route path={SECCION_ADMIN.ESTADOS} element={<PaginaEstadosOrden />} />
+            <Route path={SECCION_ADMIN.INFORMACION} element={<PaginaInformacion />} />
+          </Route>
 
-  const cerrarSesion = () => { localStorage.removeItem(CLAVE_SESION); setSesion(null); navigate('/catalogo'); };
-  const cerrarModalAuth = () => { setModalAuth(null); if (location.state?.authMode) navigate('/catalogo', { replace: true }); };
-  const contexto = { categoriaActiva, setCategoriaActiva, cartCount, agregarAlPedido: () => setCartCount((actual) => actual + 1), sesion, abrirAuth: setModalAuth, cerrarSesion, productos, categorias, usuarios, clientes, ordenes, estados, informacion, cargando, cargandoCategorias, cargandoUsuarios, cargandoClientes, cargandoOrdenes, cargandoEstados, cargandoInformacion, cargarProductos, cargarCategorias, cargarUsuarios, cargarClientes, cargarOrdenes, cargarEstados, cargarInformacion };
-
-  return <>
-    <Routes>
-      <Route element={<AppLayout contexto={contexto} />}>
-        <Route index element={<Navigate replace to="catalogo" />} />
-        <Route path="catalogo" element={<CatalogPage />} />
-        <Route path="mi-pedido" element={<PedidoPage />} />
-        <Route path="admin" element={<AccesoAdmin />}>
-          <Route index element={<Navigate replace to="productos" />} />
-          <Route path="productos" element={<ProductosAdminPage />} />
-          <Route path="categorias" element={<CategoriasAdminPage />} />
-          <Route path="usuarios" element={<UsuariosAdminPage />} />
-          <Route path="clientes" element={<ClientesAdminPage />} />
-          <Route path="ordenes" element={<OrdenesAdminPage />} />
-          <Route path="estados" element={<EstadosAdminPage />} />
-          <Route path="informacion" element={<InformacionAdminPage />} />
+          <Route path="no-autorizado" element={<PaginaNoAutorizado />} />
+          <Route path="*" element={<Navigate replace to={RUTAS.CATALOGO} />} />
         </Route>
-        <Route path="no-autorizado" element={<UnauthorizedPage />} />
-        <Route path="*" element={<Navigate replace to="/catalogo" />} />
-      </Route>
-    </Routes>
-    {modalAuth && <AuthModal modo={modalAuth} onCerrar={cerrarModalAuth} onIniciarSesion={iniciarSesion} onRegistrarse={registrarUsuario} procesando={procesandoAuth} />}
-  </>;
+      </Routes>
+
+      {autenticacion.modoAutenticacion && (
+        <ModalAutenticacion
+          key={autenticacion.modoAutenticacion}
+          modo={autenticacion.modoAutenticacion}
+          procesando={autenticacion.procesando}
+          onCerrar={autenticacion.cerrarModal}
+          onIniciarSesion={autenticacion.iniciarSesion}
+          onRegistrarse={autenticacion.registrarUsuario}
+        />
+      )}
+    </>
+  );
 }
 
 export default App;
